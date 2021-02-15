@@ -20,33 +20,21 @@ namespace MMS.Function
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            CosmosClient cosmosClient = new CosmosClient(
-            Environment.GetEnvironmentVariable("COSMOS_CONNECTION",EnvironmentVariableTarget.Process));
-            Database mms = cosmosClient.GetDatabase("mms");
-            Container container = mms.GetContainer("MMSConfig");
+            
 
             log.LogInformation($"Client making request:  {req.Headers["client-ip"]}");
 
+            
+            string motorID = (req.Query["motorID"]);
+            Config result = CosmosConnect.GetConfig(motorID);
+            log.LogInformation($"\nInput Query: {motorID}");
 
-           string motorID = (req.Query["motorID"]);
-           log.LogInformation($"\nInput Query: {motorID}");
-
-           QueryDefinition querySpec = new QueryDefinition($"SELECT * FROM m WHERE m.id='{motorID}'");
-           FeedIterator<Config> resultsIterator = container.GetItemQueryIterator<Config>(querySpec);
-           List<Config> results = new List<Config>();
-           while (resultsIterator.HasMoreResults)
-            {
-                var task = resultsIterator.ReadNextAsync();
-                task.Wait();
-                results.AddRange(task.Result);
-
-            }
-            log.LogInformation($"found {results}");
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
            
-            return new OkObjectResult(results[0]);
+
+            return new OkObjectResult(result);
         }
+        
+
     }
 }
+

@@ -7,5 +7,6 @@ namespace MMS.Function
       public string id { get; set; }
       public int log_interval { get; set; }
       public string data_post_api { get; set; }
+      public string location { get; set; } 
     }
 }
