@@ -37,7 +37,7 @@ namespace MMS.Function
 
         }
 
-        public static Config GetAll(){
+        public static List<Config> GetAll(){
              QueryDefinition querySpec = new QueryDefinition($"SELECT * FROM m");
             FeedIterator<Config> resultsIterator = CosmosConnect.container.GetItemQueryIterator<Config>(querySpec);
             List<Config> results = new List<Config>();
@@ -49,7 +49,7 @@ namespace MMS.Function
                 results.AddRange(task.Result);
 
             }
-            return results[0];
+            return results;
         }
         public async static void PostConfig(Config test){
             ItemResponse<Config> item = await container.UpsertItemAsync<Config>(test, new PartitionKey(test.location));

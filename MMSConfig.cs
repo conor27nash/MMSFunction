@@ -27,7 +27,7 @@ namespace MMS.Function
             
             string motorID = (req.Query["motorID"]);
             if(motorID.ToLower() == "all"){
-                Config allResult = CosmosConnect.GetAll();
+                List<Config> allResult = CosmosConnect.GetAll();
                 return new OkObjectResult(allResult);
             }
             Config result = CosmosConnect.GetConfig(motorID);
