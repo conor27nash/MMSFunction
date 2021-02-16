@@ -37,7 +37,20 @@ namespace MMS.Function
 
         }
 
+        public static Config GetAll(){
+             QueryDefinition querySpec = new QueryDefinition($"SELECT * FROM m");
+            FeedIterator<Config> resultsIterator = CosmosConnect.container.GetItemQueryIterator<Config>(querySpec);
+            List<Config> results = new List<Config>();
 
+            while (resultsIterator.HasMoreResults)
+            {
+                var task = resultsIterator.ReadNextAsync();
+                task.Wait();
+                results.AddRange(task.Result);
+
+            }
+            return results[0];
+        }
         public async static void PostConfig(Config test){
             ItemResponse<Config> item = await container.UpsertItemAsync<Config>(test, new PartitionKey(test.location));
         }
