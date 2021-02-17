@@ -1,6 +1,7 @@
 using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MMS.Function
 {
@@ -12,33 +13,14 @@ namespace MMS.Function
 
         public static Config GetConfig(String inputID)
         {
-            QueryDefinition querySpec = new QueryDefinition($"SELECT * FROM m WHERE m.id='{inputID}'");
-            FeedIterator<Config> resultsIterator = CosmosConnect.container.GetItemQueryIterator<Config>(querySpec);
-            List<Config> results = new List<Config>();
-
-            while (resultsIterator.HasMoreResults)
-            {
-                var task = resultsIterator.ReadNextAsync();
-                task.Wait();
-                results.AddRange(task.Result);
-
-            }
-
-            if (results.Count < 1)
-            {   
-                Config notFound = new Config() 
-                {id = "00:00:00:00:00",
-                log_interval = 0,
-                data_post_api = "unknown"
-                 };
-                return notFound;            
-            }
-           return results[0];
-
+            Task<ItemResponse<Config>> results = container.ReadItemAsync<Config>(inputID, new PartitionKey(""));
+            results.Wait();
+            return results.Result;
         }
 
-        public static List<Config> GetAll(){
-             QueryDefinition querySpec = new QueryDefinition($"SELECT * FROM m");
+        public static List<Config> GetAll()
+        {
+            QueryDefinition querySpec = new QueryDefinition($"SELECT * FROM m");
             FeedIterator<Config> resultsIterator = CosmosConnect.container.GetItemQueryIterator<Config>(querySpec);
             List<Config> results = new List<Config>();
 
@@ -51,7 +33,8 @@ namespace MMS.Function
             }
             return results;
         }
-        public async static void PostConfig(Config test){
+        public async static void PostConfig(Config test)
+        {
             ItemResponse<Config> item = await container.UpsertItemAsync<Config>(test, new PartitionKey(test.location));
         }
     }
