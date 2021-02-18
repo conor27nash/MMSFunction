@@ -26,6 +26,7 @@ namespace MMS.Function
 
             string motorID = (req.Query["motorID"]);
             string deleteID = (req.Query["deleteID"]);
+            
 
             if (deleteID != null)
             {
@@ -45,6 +46,7 @@ namespace MMS.Function
 
                 return new OkObjectResult(result);
             }
+            return new OkObjectResult("Hello\nTo retrieve configurations use the query: '?motorID=' with either the motor id for the configuration you want to retrieve or with the word 'all' to get all.\nTo delete a configuration use the query: '?deleteID=' with the motor id you wish to remove.");
         }
 
 
