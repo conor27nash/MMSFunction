@@ -13,9 +13,9 @@ namespace MMS.Function
 
         public static Config GetConfig(String inputID)
         {
-            Task<ItemResponse<Config>> results = container.ReadItemAsync<Config>(inputID, new PartitionKey(""));
-            results.Wait();
-            return results.Result;
+           Config results = container.ReadItemAsync<Config>(inputID, new PartitionKey("")).Result;
+            
+            return results;
         }
 
         public static List<Config> GetAll()
@@ -36,6 +36,10 @@ namespace MMS.Function
         public async static void PostConfig(Config test)
         {
             ItemResponse<Config> item = await container.UpsertItemAsync<Config>(test, new PartitionKey(test.location));
+        }
+
+        public async static void deleteConfig(String id){
+            ItemResponse<Config> configDelete = await container.DeleteItemAsync<Config>(id, new PartitionKey(""));
         }
     }
 

@@ -20,24 +20,33 @@ namespace MMS.Function
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            
+
 
             log.LogInformation($"Client making request:  {req.Headers["client-ip"]}");
 
-            
             string motorID = (req.Query["motorID"]);
-            if(motorID.ToLower() == "all"){
-                List<Config> allResult = CosmosConnect.GetAll();
-                return new OkObjectResult(allResult);
+            string deleteID = (req.Query["deleteID"]);
+
+            if (deleteID != null)
+            {
+                CosmosConnect.deleteConfig(deleteID);
             }
-            Config result = CosmosConnect.GetConfig(motorID);
-            log.LogInformation($"\nInput Query: {motorID}");
+            if (motorID != null)
+            {
+                if (motorID.ToLower() == "all")
+                {
+                    List<Config> allResult = CosmosConnect.GetAll();
+                    return new OkObjectResult(allResult);
+                }
+                Config result = CosmosConnect.GetConfig(motorID);
+                log.LogInformation($"\nInput Query: {motorID}");
 
-           
 
-            return new OkObjectResult(result);
+
+                return new OkObjectResult(result);
+            }
         }
-        
+
 
     }
 }
