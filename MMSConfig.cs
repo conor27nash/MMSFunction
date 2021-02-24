@@ -31,6 +31,7 @@ namespace MMS.Function
             if (deleteID != null)
             {
                 CosmosConnect.deleteConfig(deleteID);
+                
             }
             if (motorID != null)
             {
